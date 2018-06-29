@@ -1,0 +1,21 @@
+FROM amazonlinux
+USER root
+
+ENV TZ "America/New_York"
+RUN echo "$TZ" >> /etc/timezone \ 
+    && ln -sf /etc/timezone /etc/localtime
+
+RUN yum update -y \ 
+    && yum install shadow-utils -y \ 
+    && yum install java-1.8.0 -y
+
+RUN groupadd java \ 
+    && useradd --gid java --create-home --shell /bin/bash java
+
+COPY ./gs-spring-boot-0.1.0.jar /home/java
+
+USER java
+WORKDIR /home/java
+
+CMD java -jar gs-spring-boot-0.1.0.jar
+EXPOSE 8080
